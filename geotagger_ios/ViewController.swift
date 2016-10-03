@@ -41,7 +41,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 let tag = Tag(title: item["name"] as! String,
                             locationName: item["subcategory"] as! String,
                             discipline: item["category"] as! String,
-                            coordinate: CLLocationCoordinate2D(latitude:coord[0] , longitude: coord[1]))
+                            coordinate: CLLocationCoordinate2D(latitude:coord[0] , longitude: coord[1]), description:item["description"] as! String)
                 
                 self.mapView.addAnnotation(tag)
             }
@@ -129,6 +129,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             "latitude":Float(self.myLocation.latitude),
             "longitude":Float(self.myLocation.longitude)
         ]
+        
+        let tag = Tag(title: json["name"] as! String,
+                      locationName: json["subcategory"] as! String,
+                      discipline: json["category"] as! String,
+                      coordinate: self.myLocation, description:json["description"] as! String)
+        
+        self.mapView.addAnnotation(tag)
 
         do {
            let jsonData = try NSJSONSerialization.dataWithJSONObject(json, options: .PrettyPrinted)
@@ -154,7 +161,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             
         }
         task.resume()
-        self.centerMap(self.myLocation)
+        //self.centerMap(self.myLocation)
     }
     
     func sendValue() {
@@ -175,7 +182,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         performSegueWithIdentifier("NotifyModally", sender: nil)
         
-        self.centerMap(myLocation)
+        //self.centerMap(myLocation)
     }
     
     func centerMap(center:CLLocationCoordinate2D){

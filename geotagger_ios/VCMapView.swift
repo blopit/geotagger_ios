@@ -31,4 +31,18 @@ extension ViewController: MKMapViewDelegate {
         }
         return nil
     }
+    
+    func mapView(mapView: MKMapView!, annotationView view: MKAnnotationView!,
+                 calloutAccessoryControlTapped control: UIControl!) {
+        let anno = view.annotation as! Tag;
+        
+        if control == view.rightCalloutAccessoryView {
+            let alert = UIAlertView()
+            alert.title = anno.title!
+            alert.message = anno.desc
+            alert.addButtonWithTitle("OK")
+            alert.show()
+        }
+        
+    }
 }

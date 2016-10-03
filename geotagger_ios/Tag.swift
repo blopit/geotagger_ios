@@ -17,13 +17,15 @@ class Tag: NSObject, MKAnnotation {
     let title: String?
     let locationName: String
     let discipline: String
+    let desc: String
     let coordinate: CLLocationCoordinate2D
     
-    init(title: String, locationName: String, discipline: String, coordinate: CLLocationCoordinate2D) {
+    init(title: String, locationName: String, discipline: String, coordinate: CLLocationCoordinate2D, description: String) {
         self.title = title
         self.locationName = locationName
         self.discipline = discipline
         self.coordinate = coordinate
+        self.desc = description
         super.init()
     }
     
