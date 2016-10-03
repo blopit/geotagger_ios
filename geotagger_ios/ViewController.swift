@@ -22,7 +22,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     var desc: NSString = ""
     
     var user: NSString = "Shrenil"
-    var token: NSString = "c5fd8c022bad0d53679730a2e0d40c7f933e9fffccc6fb8c109832169864ade5ee59f12a1863d342127de144d0ebd472e9e5eacb17672abd0aed609261f4402eb2bb5164f96c70dbc5e31fd1f1cd34a2c20fc7cbed669c07f625fbe95d15b4d147bcdc782aa4603b28c8ef630be88f75b3b2986a8e2775acf4257349b8b35002b98a1a7f2d91f650a5fedf5e916f9aa8955e7744703b8302319c0af0dc80b040ac59f509d8d5f4d75b790856684be368af6b94eaccae474e282e00a382c1713f45d52b0b6ce2271accb706bd2d8fed53e4d59e00154a39fdba6fdc489ba4a2c4075e68a9eb5ad9ca08686e554096c089134d5349f65b95d8c95bfd91fc7a971c"
+    var token: NSString = "Bearer: c5fd8c022bad0d53679730a2e0d40c7f933e9fffccc6fb8c109832169864ade5ee59f12a1863d342127de144d0ebd472e9e5eacb17672abd0aed609261f4402eb2bb5164f96c70dbc5e31fd1f1cd34a2c20fc7cbed669c07f625fbe95d15b4d147bcdc782aa4603b28c8ef630be88f75b3b2986a8e2775acf4257349b8b35002b98a1a7f2d91f650a5fedf5e916f9aa8955e7744703b8302319c0af0dc80b040ac59f509d8d5f4d75b790856684be368af6b94eaccae474e282e00a382c1713f45d52b0b6ce2271accb706bd2d8fed53e4d59e00154a39fdba6fdc489ba4a2c4075e68a9eb5ad9ca08686e554096c089134d5349f65b95d8c95bfd91fc7a971c"
     var jsondata: NSData = NSData()
     
     func getAllTags() {
@@ -100,13 +100,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
         addLongPressGesture()
         
-        let artwork = Tag(title: "King David Kalakaua",
-                          locationName: "Waikiki Gateway Park",
-                              discipline: "Sculpture",
-                              coordinate: CLLocationCoordinate2D(latitude: 21.283921, longitude: -157.831661))
-        
-        mapView.addAnnotation(artwork)
-        
         getAllTags();
         
         
@@ -123,14 +116,50 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         self.mapView.addGestureRecognizer(longPressRecogniser)
     }
     
-    func sendValue() {
-        print(name);
+    func post() {
+        let request = NSMutableURLRequest(URL: NSURL(string: "https://geotaganything.herokuapp.com/tags")!)
+        request.HTTPMethod = "POST"
+        request.setValue(token as String, forHTTPHeaderField: "Authorization")
         
-        let annot = Tag(title: name as String,
-                        locationName: subcat as String,
-                        discipline: cat as String,
-                        coordinate: myLocation)
-        self.mapView.addAnnotation(annot)
+        let json = [
+            "name":name,
+            "category":cat,
+            "subcategory":subcat,
+            "description":desc,
+            "latitude":Float(self.myLocation.latitude),
+            "longitude":Float(self.myLocation.longitude)
+        ]
+
+        do {
+           let jsonData = try NSJSONSerialization.dataWithJSONObject(json, options: .PrettyPrinted)
+            request.HTTPBody = jsonData
+        } catch {
+            
+        }
+        request.setValue("application/json", forHTTPHeaderField:"Content-Type")
+        
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request) { data, response, error in
+            guard error == nil && data != nil else {                                                          // check for fundamental networking error
+                print("error=\(error)")
+                return
+            }
+            
+            if let httpStatus = response as? NSHTTPURLResponse where httpStatus.statusCode != 200 {           // check for http errors
+                print("statusCode should be 200, but is \(httpStatus.statusCode)")
+                print("response = \(response)")
+            }
+            
+            let responseString = String(data: data!, encoding: NSUTF8StringEncoding)
+            print("responseString = \(responseString)")
+            
+        }
+        task.resume()
+        self.centerMap(self.myLocation)
+    }
+    
+    func sendValue() {
+        print(name)
+        post()
     }
     
     func handleLongPress(gestureRecognizer:UIGestureRecognizer){
@@ -169,7 +198,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let locValue:CLLocationCoordinate2D = manager.location!.coordinate
         
-        centerMap(locValue)
+        let point1 = MKMapPointForCoordinate(myLocation)
+        let point2 = MKMapPointForCoordinate(locValue)
+        let distance = MKMetersBetweenMapPoints(point1, point2)
+        
+        if (distance > 10) {
+            centerMap(locValue)
+        }
+        
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
