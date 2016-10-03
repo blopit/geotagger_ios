@@ -33,9 +33,9 @@ class Tag: NSObject, MKAnnotation {
     
     func pinColor() -> MKPinAnnotationColor  {
         switch discipline {
-        case "Sculpture", "Plaque":
+        case "Emergency", "Service":
             return .Red
-        case "Mural", "Monument":
+        case "Structure", "Scenery":
             return .Purple
         default:
             return .Green

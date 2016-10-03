@@ -27,6 +27,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     func getAllTags() {
         
+        self.mapView.removeAnnotations(mapView.annotations)
+        
         let url = NSURL(string: String(format: "https://geotaganything.herokuapp.com/tags?latitude=%f&longitude=%f", Float(myLocation.latitude), Float(myLocation.longitude)))
         
         let task = NSURLSession.sharedSession().dataTaskWithURL(url!) {(data, response, error) in
@@ -34,10 +36,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             self.jsondata = data!
             
             let json = self.nsdataToJSON(data!)
-            
-            //remove all previous
-            self.mapView.removeAnnotations(self.mapView.annotations)
-            
             for item in json as! [Dictionary<String, AnyObject>] {
                 let coord = item["location"]!["coordinates"] as! Array<CLLocationDegrees>
                 let tag = Tag(title: item["name"] as! String,
