@@ -31,12 +31,24 @@ class ModalViewController: UIViewController {
     
     func okayReturn() -> Bool
     {
-        
         dismissViewControllerAnimated(true, completion: nil)
+        parent?.name = nameField.text!
+        parent?.cat = categoryField.text!
+        parent?.subcat = subcatField.text!
+        parent?.desc = descField.text!
+        parent?.sendValue()
         return true
     }
     
+    func clearParent () {
+        parent?.name = ""
+        parent?.cat = ""
+        parent?.subcat = ""
+        parent?.desc = ""
+    }
+    
     override func viewDidLoad() {
+        clearParent()
         view.backgroundColor = UIColor.clearColor()
         view.opaque = false
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ModalViewController.dismissKeyboard))
@@ -47,12 +59,10 @@ class ModalViewController: UIViewController {
         view.endEditing(true)
     }
     
-    //create list
     var list = ["Service","Structure","Scenery","Shop","Food & Drink","Emergency"]
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
         return 1
@@ -83,7 +93,6 @@ class ModalViewController: UIViewController {
     func textFieldDidBeginEditing(textField: UITextField) {
         if textField == self.categoryField {
             hide(false);
-            //if you dont want the users to se the keyboard type:
             textField.endEditing(true)
         }
     }
