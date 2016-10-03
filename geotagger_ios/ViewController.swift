@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-class ViewController: UIViewController, CLLocationManagerDelegate, ModalViewControllerDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate {
 
     @IBOutlet weak var mapView: MKMapView!
     let regionRadius: CLLocationDistance = 300
@@ -21,30 +21,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, ModalViewCont
                                                                   regionRadius * 2.0, regionRadius * 2.0)
         mapView.setRegion(coordinateRegion, animated: true)
     }
-    
-    /*func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation])
-    {
-        let location = locations.last! as CLLocation
-        //centerMapOnLocation(CLLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude))
-        
-        let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        
-        let current = CLLocationCoordinate2D(latitude: lat, longitude: long)
-       
-        let distance = MKMetersBetweenMapPoints( MKMapPointForCoordinate(center),  MKMapPointForCoordinate(current))
-        print(distance)
-        if (distance > 10){
-            lat = location.coordinate.latitude
-            long = location.coordinate.longitude
-            let loc = CLLocation(latitude: lat, longitude: long)
-            
-            addRadiusCircle(loc)
-            //centerMapOnLocation(loc)
-        }
-        
-       // mapView.o
-    }*/
-    
     
     func mapView(mapView: MKMapView, rendererForOverlay overlay: MKOverlay) -> MKOverlayRenderer {
         if overlay is MKCircle {
@@ -60,9 +36,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, ModalViewCont
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        
-        //_ = CLLocation(latitude: 21.282778, longitude: -157.829444)
         
         if (CLLocationManager.locationServicesEnabled())
         {
@@ -119,12 +92,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, ModalViewCont
         
         //let annot:MKPointAnnotation = MKPointAnnotation()
         
-        let modalVC = ModalViewController();
-        modalVC.delegate=self;
-        self.presentViewController(modalVC, animated: true, completion: nil)
-        
-        //performSegueWithIdentifier("NotifyModally", sender: nil)
-        //showModal();
+        performSegueWithIdentifier("NotifyModally", sender: nil)
         
         /*let annot = Tag(title: "DELETE THIS",
                           locationName: "DELETE THIS",

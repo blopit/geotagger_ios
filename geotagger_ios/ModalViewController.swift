@@ -31,8 +31,7 @@ class ModalViewController: UIViewController {
     
     func okayReturn() -> Bool
     {
-        firstViewController?.colourLabel.text = nameEntry.text
-        nameEntry.resignFirstResponder()
+        
         dismissViewControllerAnimated(true, completion: nil)
         return true
     }
@@ -63,6 +62,14 @@ class ModalViewController: UIViewController {
         return list.count
     }
     
+    func hide(hide:Bool) {
+        self.dropDown.hidden = hide
+        self.nameField.hidden = !hide
+        self.descField.hidden = !hide
+        self.subcatField.hidden = !hide
+        self.categoryField.hidden = !hide
+    }
+    
     func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
         self.view.endEditing(true)
         return list[row]
@@ -70,12 +77,12 @@ class ModalViewController: UIViewController {
     
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         self.categoryField.text = self.list[row]
-        self.dropDown.hidden = true
+        hide(true)
     }
     
     func textFieldDidBeginEditing(textField: UITextField) {
         if textField == self.categoryField {
-            self.dropDown.hidden = false
+            hide(false);
             //if you dont want the users to se the keyboard type:
             textField.endEditing(true)
         }
